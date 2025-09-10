@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-import 'package:my_project/pages/login.dart';
-import 'package:my_project/pages/adminpages/admin2.dart';
+import 'package:lotto_app/pages/login.dart';
+import 'package:lotto_app/pages/adminpages/admin2.dart';
 
 class Admin1 extends StatefulWidget {
   final int? cid;

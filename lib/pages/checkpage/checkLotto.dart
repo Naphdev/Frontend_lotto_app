@@ -3,15 +3,13 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:my_project/pages/checkpage/checkLotto2.dart';
+import 'package:lotto_app/pages/checkpage/checkLotto2.dart';
 
 import 'package:jwt_decoder/jwt_decoder.dart';
-import 'package:my_project/config/config.dart';
-import 'package:my_project/config/configg.dart';
+import 'package:lotto_app/config/config.dart';
+import 'package:lotto_app/config/configg.dart';
 import 'dart:developer' as dev;
 import 'package:http/http.dart' as http;
-import 'package:my_project/pages/navpages/another.dart';
-import 'package:my_project/pages/navpages/mylotto.dart';
 
 class CheckLottoPage extends StatefulWidget {
   const CheckLottoPage({super.key, required this.token});
@@ -36,10 +34,10 @@ class _CheckLottoPageState extends State<CheckLottoPage> {
     Configuration.getConfig().then(
       (value) {
         dev.log(value['apiEndpoint']);
-        final url = value['apiEndpoint'];
+        dev.log('API Endpoint: ${value['apiEndpoint']}');
       },
     );
-    CheckLottoPage2(token: widget.token ?? '');
+    CheckLottoPage2(token: widget.token);
   }
 
   Future<void> _decodeToken() async {
@@ -94,17 +92,13 @@ class _CheckLottoPageState extends State<CheckLottoPage> {
               ticketData.containsKey('tickets')) {
             final List<dynamic> ticketsList = ticketData['tickets'];
 
-            if (ticketsList is List<dynamic>) {
-              final List<Map<String, dynamic>> tickets =
-                  ticketsList.map((e) => e as Map<String, dynamic>).toList();
-              return {
-                'name': ticketData['name'],
-                'id': ticketData['id'],
-                'tickets': tickets
-              };
-            } else {
-              throw Exception('Invalid data format: "tickets" is not a list');
-            }
+            final List<Map<String, dynamic>> tickets =
+                ticketsList.map((e) => e as Map<String, dynamic>).toList();
+            return {
+              'name': ticketData['name'],
+              'id': ticketData['id'],
+              'tickets': tickets
+            };
           } else {
             throw Exception('Invalid data format: no key "tickets"');
           }
@@ -123,151 +117,357 @@ class _CheckLottoPageState extends State<CheckLottoPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[300], // สีพื้นหลังเหมือนในภาพ
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () {
-            Navigator.pop(context); // กลับไปยังหน้าก่อนหน้า
-          },
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Color(0xFF667eea),
+              Color(0xFF764ba2),
+              Color(0xFFf093fb),
+            ],
+          ),
         ),
-      ),
-      body: Center(
-        child: Column(
-          // mainAxisSize: MainAxisSize.min, // ให้คอลัมน์มีขนาดเล็กที่สุดเพื่อให้เนื้อหาอยู่ตรงกลาง
-          children: [
-            // เพิ่ม title Lotto
-            const Text(
-              'Lotto',
-              style: TextStyle(
-                fontSize: 32, // ขนาดใหญ่เพื่อให้ชัดเจน
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-              ),
-            ),
-            const SizedBox(height: 20),
-            // ตัวเลขล็อตโต้ที่ใหญ่และยาวขึ้น
+        child: SafeArea(
+          child: Column(
+            children: [
+              // Header Section
+              _buildHeader(),
 
-            Expanded(
-              child: FutureBuilder<Map<String, dynamic>>(
-                future: _fetchLottos(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
-                  } else if (snapshot.hasError) {
-                    dev.log('Error: ${snapshot.error}');
-                    return Center(
-                        child: Text('เกิดข้อผิดพลาด: ${snapshot.error}'));
-                  } else if (!snapshot.hasData ||
-                      (snapshot.data!['tickets'] as List<dynamic>).isEmpty) {
-                    return const Center(child: Text('ไม่พบข้อมูลสลากกินแบ่ง'));
-                  } else {
-                    final tickets = snapshot.data!['tickets'] as List<dynamic>;
-
-                    return ListView.builder(
-                      itemCount: tickets.length,
-                      itemBuilder: (context, index) {
-                        final ticket = tickets[index] as Map<String, dynamic>;
-                        final lottoNumber = ticket['LottoNumber'] as String;
-
-                        return Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            boxShadow: const [
-                              BoxShadow(
-                                offset: Offset(2.0, 2.0),
-                                blurRadius: 7.0,
-                                color: Colors.black,
-                              ),
-                            ],
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          margin: const EdgeInsets.all(8),
-                          child: Padding(
-                            padding: const EdgeInsets.all(16),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Text('Lotto Number: $lottoNumber',
-                                    style: const TextStyle(fontSize: 18)),
-                              ],
-                            ),
-                          ),
-                        );
-                      },
-                    );
-                  }
-                },
-              ),
-            ),
-
-            // const SizedBox(height: 10),
-            // ปุ่มตรวจสลาก
-            Padding(
-              padding: const EdgeInsets.only(bottom: 20),
-              child: ElevatedButton(
-                onPressed: () {
-                  // นำทางไปยังหน้า CheckLottoPage2
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => CheckLottoPage2(token: widget.token ?? ''),
-                    ),
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green[100],
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
+              // Content Section
+              Expanded(
+                child: Container(
+                  margin: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 20,
+                        offset: const Offset(0, 10),
+                      ),
+                    ],
                   ),
-                ),
-                child: const Padding(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
-                  child: Text(
-                    'ตรวจสลากดิจิทัล',
-                    style: TextStyle(color: Colors.black, fontSize: 16),
+                  child: Column(
+                    children: [
+                      // Title Section
+                      _buildTitleSection(),
+
+                      // Tickets List
+                      Expanded(
+                        child: _buildTicketsList(),
+                      ),
+
+                      // Check Button
+                      _buildCheckButton(),
+                    ],
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildLottoNumberDisplay(String number) {
+  Widget _buildHeader() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      child: Row(
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.2),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: IconButton(
+              icon: const Icon(Icons.arrow_back, color: Colors.white),
+              onPressed: () => Navigator.pop(context),
+            ),
+          ),
+          const SizedBox(width: 16),
+          const Text(
+            'สลากของฉัน',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTitleSection() {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [Color(0xFF667eea), Color(0xFF764ba2)],
+              ),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(
+                  Icons.confirmation_number,
+                  color: Colors.white,
+                  size: 32,
+                ),
+                const SizedBox(width: 12),
+                const Text(
+                  'สลากดิจิทัล',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'สลากที่คุณซื้อไว้',
+            style: TextStyle(
+              color: Colors.grey[600],
+              fontSize: 16,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTicketsList() {
+    return FutureBuilder<Map<String, dynamic>>(
+      future: _fetchLottos(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return _buildLoadingState();
+        } else if (snapshot.hasError) {
+          return _buildErrorState(snapshot.error.toString());
+        } else if (!snapshot.hasData ||
+            (snapshot.data!['tickets'] as List<dynamic>).isEmpty) {
+          return _buildEmptyState();
+        } else {
+          final tickets = snapshot.data!['tickets'] as List<dynamic>;
+          return _buildTicketsGrid(tickets);
+        }
+      },
+    );
+  }
+
+  Widget _buildLoadingState() {
+    return const Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          CircularProgressIndicator(
+            valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF667eea)),
+          ),
+          SizedBox(height: 16),
+          Text(
+            'กำลังโหลดสลาก...',
+            style: TextStyle(
+              color: Colors.grey,
+              fontSize: 16,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildErrorState(String error) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.error_outline,
+            size: 64,
+            color: Colors.red[300],
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'เกิดข้อผิดพลาด',
+            style: TextStyle(
+              color: Colors.grey[600],
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 32),
+            child: Text(
+              error,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Colors.grey[500],
+                fontSize: 14,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEmptyState() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.inbox_outlined,
+            size: 64,
+            color: Colors.grey[400],
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'ยังไม่มีสลาก',
+            style: TextStyle(
+              color: Colors.grey[600],
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'ไปซื้อสลากก่อนตรวจรางวัลกันเถอะ!',
+            style: TextStyle(
+              color: Colors.grey[500],
+              fontSize: 14,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTicketsGrid(List<dynamic> tickets) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10.0),
-      child: Container(
-        width: MediaQuery.of(context).size.width *
-            0.8, // ขนาดยาวขึ้น 80% ของความกว้างหน้าจอ
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(30),
-          boxShadow: const [
-            BoxShadow(
-              color: Colors.black12,
-              spreadRadius: 2,
-              blurRadius: 5,
+      padding: const EdgeInsets.all(16),
+      child: GridView.builder(
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          childAspectRatio: 1.2,
+          crossAxisSpacing: 12,
+          mainAxisSpacing: 12,
+        ),
+        itemCount: tickets.length,
+        itemBuilder: (context, index) {
+          final ticket = tickets[index] as Map<String, dynamic>;
+          final lottoNumber = ticket['LottoNumber'] as String;
+          return _buildTicketCard(lottoNumber, index);
+        },
+      ),
+    );
+  }
+
+  Widget _buildTicketCard(String lottoNumber, int index) {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            Colors.blue[50]!,
+            Colors.purple[50]!,
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: Colors.blue[200]!,
+          width: 2,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.blue.withOpacity(0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.confirmation_number,
+            color: Colors.blue[600],
+            size: 32,
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'เลขสลาก',
+            style: TextStyle(
+              color: Colors.grey[600],
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            lottoNumber,
+            style: TextStyle(
+              color: Colors.blue[800],
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 2,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCheckButton() {
+    return Container(
+      width: double.infinity,
+      margin: const EdgeInsets.all(20),
+      child: ElevatedButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => CheckLottoPage2(token: widget.token),
+            ),
+          );
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: const Color(0xFF667eea),
+          foregroundColor: Colors.white,
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          elevation: 8,
+          shadowColor: const Color(0xFF667eea).withOpacity(0.3),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.search, size: 24),
+            const SizedBox(width: 12),
+            const Text(
+              'ตรวจรางวัล',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ],
-        ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(
-              horizontal: 30.0, vertical: 30.0), // ขนาด padding ใหญ่ขึ้น
-          child: Text(
-            number,
-            textAlign: TextAlign.center, // จัดข้อความให้อยู่ตรงกลาง
-            style: const TextStyle(
-                fontSize: 40, // ขนาดใหญ่ขึ้น
-                letterSpacing: 8,
-                fontWeight: FontWeight.w700 // ช่องว่างระหว่างตัวอักษรเพิ่มขึ้น
-                ),
-          ),
         ),
       ),
     );

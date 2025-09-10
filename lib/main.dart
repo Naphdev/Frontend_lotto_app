@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:my_project/pages/adminpages/admin1.dart';
-import 'package:my_project/pages/login.dart';
+import 'package:lotto_app/pages/adminpages/admin1.dart';
+import 'package:lotto_app/pages/login.dart';
 
 void main() {
   runApp(const MyApp());

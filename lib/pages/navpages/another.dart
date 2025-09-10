@@ -2,11 +2,11 @@ import 'dart:convert';
 
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:flutter/material.dart';
-import 'package:my_project/config/config.dart';
-import 'package:my_project/config/configg.dart';
-import 'package:my_project/pages/checkpage/checkLotto.dart';
-import 'package:my_project/pages/login.dart';
-import 'package:my_project/pages/paypage/searchLotto.dart';
+import 'package:lotto_app/config/config.dart';
+import 'package:lotto_app/config/configg.dart';
+import 'package:lotto_app/pages/checkpage/checkLotto.dart';
+import 'package:lotto_app/pages/login.dart';
+import 'package:lotto_app/pages/paypage/searchLotto.dart';
 import 'dart:developer' as dev;
 import 'package:http/http.dart' as http;
 

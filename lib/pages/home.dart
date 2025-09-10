@@ -4,11 +4,9 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
-import 'package:my_project/pages/navpages/another.dart';
-import 'package:my_project/pages/navpages/homePage.dart';
-import 'package:my_project/pages/navpages/mylotto.dart';
-
-
+import 'package:lotto_app/pages/navpages/another.dart';
+import 'package:lotto_app/pages/navpages/homePage.dart';
+import 'package:lotto_app/pages/navpages/mylotto.dart';
 
 class HomePage extends StatefulWidget {
   final int? cid;
@@ -34,8 +32,8 @@ class _HomePageState extends State<HomePage> {
     }
     // Set initial page with token
     currentPage = Page1(token: widget.token ?? '');
-    Page2(token: widget.token ?? '');
-    Page3(token: widget.token ?? '');
+    // Page2(token: widget.token ?? '');
+    // Page3(token: widget.token ?? '');
   }
 
   @override
@@ -49,8 +47,10 @@ class _HomePageState extends State<HomePage> {
       bottomNavigationBar: BottomNavigationBar(
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.document_scanner), label: 'My Tickets'),
-          BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Settings'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.document_scanner), label: 'My Tickets'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.settings), label: 'Settings'),
         ],
         currentIndex: selectedIndex,
         onTap: (int index) {
@@ -70,16 +70,16 @@ class _HomePageState extends State<HomePage> {
     );
 
     // body: Center(
-        // child: Column(
-        //   mainAxisAlignment: MainAxisAlignment.center,
-        //   children: [
-        //     Text('Welcome to Home Page'),
-        //     SizedBox(height: 20),
-        //     Text('CID: ${widget.cid ?? "Not provided"}'),
-        //     Text('Token: ${widget.token ?? "Not provided"}'),
-        //     Text('Email: ${email ?? "Not provided"}'),
-        //   ],
-        // ),
+    // child: Column(
+    //   mainAxisAlignment: MainAxisAlignment.center,
+    //   children: [
+    //     Text('Welcome to Home Page'),
+    //     SizedBox(height: 20),
+    //     Text('CID: ${widget.cid ?? "Not provided"}'),
+    //     Text('Token: ${widget.token ?? "Not provided"}'),
+    //     Text('Email: ${email ?? "Not provided"}'),
+    //   ],
+    // ),
     //   ),
     // );
   }

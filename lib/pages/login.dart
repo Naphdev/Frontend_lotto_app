@@ -8,11 +8,11 @@ import 'package:http/http.dart' as http;
 import 'dart:developer' as dev;
 
 // import 'package:lotto_app/pages/home.dart';
-import 'package:my_project/config/config.dart';
-import 'package:my_project/config/configg.dart';
-import 'package:my_project/pages/home.dart';
-import 'package:my_project/pages/reg.dart';
-import 'package:my_project/pages/adminpages/admin1.dart';
+import 'package:lotto_app/config/config.dart';
+import 'package:lotto_app/config/configg.dart';
+import 'package:lotto_app/pages/home.dart';
+import 'package:lotto_app/pages/reg.dart';
+import 'package:lotto_app/pages/adminpages/admin1.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class loginPage extends StatefulWidget {
@@ -107,9 +107,35 @@ class _loginPageState extends State<loginPage> {
   void _showSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(
-          message,
-          style: const TextStyle(color: Colors.red),
+        content: Row(
+          children: [
+            const Icon(Icons.error_outline, color: Colors.white, size: 20),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                message,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+          ],
+        ),
+        backgroundColor: const Color(0xFFE57373),
+        behavior: SnackBarBehavior.floating,
+        margin: const EdgeInsets.all(16),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        duration: const Duration(seconds: 4),
+        action: SnackBarAction(
+          label: 'ปิด',
+          textColor: Colors.white,
+          onPressed: () {
+            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+          },
         ),
       ),
     );
@@ -118,113 +144,252 @@ class _loginPageState extends State<loginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFE0E0E0),
-      body: Stack(
-        children: [
-          Positioned(
-            top: -100,
-            left: -100,
-            child: Container(
-              width: 200,
-              height: 200,
-              decoration: const BoxDecoration(
-                color: Color(0xFFD1C4E9),
-                shape: BoxShape.circle,
-              ),
-            ),
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Color(0xFF7E57C2),
+              Color(0xFF9575CD),
+              Color(0xFFB39DDB),
+            ],
+            stops: [0.0, 0.5, 1.0],
           ),
-          SafeArea(
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(24.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 100),
-                    const Text(
-                      'Lotto',
-                      style:
-                          TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
-                    ),
-                    Text(
-                      'Welcome onboard!',
-                      style: TextStyle(fontSize: 18, color: Colors.grey[600]),
-                    ),
-                    const SizedBox(height: 40),
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      child: TextField(
-                        controller: emailNoCtl,
-                        decoration: const InputDecoration(
-                          hintText: 'Email',
-                          prefixIcon: Icon(Icons.person, color: Colors.grey),
-                          border: InputBorder.none,
-                          contentPadding: EdgeInsets.symmetric(
-                              vertical: 15, horizontal: 20),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      child: TextField(
-                        controller: passNoCtl,
-                        obscureText: true,
-                        decoration: const InputDecoration(
-                          hintText: 'Password',
-                          prefixIcon: Icon(Icons.lock, color: Colors.grey),
-                          border: InputBorder.none,
-                          contentPadding: EdgeInsets.symmetric(
-                              vertical: 15, horizontal: 20),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: loginUser,
-                        child: const Text('Login',
-                            style:
-                                TextStyle(fontSize: 18, color: Colors.white)),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF7E57C2),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                          padding: const EdgeInsets.symmetric(vertical: 15),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+        ),
+        child: SafeArea(
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 60),
+                  // Logo and Welcome Section
+                  Center(
+                    child: Column(
                       children: [
-                        Text("Don't have an account? ",
-                            style: TextStyle(color: Colors.grey[600])),
-                        GestureDetector(
-                          onTap: _navigateToRegister,
-                          child: const Text(
-                            'Sign up',
-                            style: TextStyle(
-                                color: Color(0xFF7E57C2),
-                                fontWeight: FontWeight.bold),
+                        Container(
+                          width: 100,
+                          height: 100,
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.2),
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.1),
+                                blurRadius: 20,
+                                offset: const Offset(0, 10),
+                              ),
+                            ],
+                          ),
+                          child: const Icon(
+                            Icons.casino,
+                            size: 50,
+                            color: Colors.white,
+                          ),
+                        ),
+                        const SizedBox(height: 24),
+                        const Text(
+                          'Lotto App',
+                          style: TextStyle(
+                            fontSize: 32,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          'ยินดีต้อนรับสู่ระบบสลากดิจิทัล',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.white.withOpacity(0.9),
                           ),
                         ),
                       ],
                     ),
-                  ],
-                ),
+                  ),
+                  const SizedBox(height: 60),
+
+                  // Login Form Card
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(24),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 20,
+                          offset: const Offset(0, 10),
+                        ),
+                      ],
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(24.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'เข้าสู่ระบบ',
+                            style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF212121),
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'กรุณากรอกข้อมูลเพื่อเข้าสู่ระบบ',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey[600],
+                            ),
+                          ),
+                          const SizedBox(height: 32),
+
+                          // Email Field
+                          _buildTextField(
+                            controller: emailNoCtl,
+                            hintText: 'อีเมล',
+                            prefixIcon: Icons.email_outlined,
+                            keyboardType: TextInputType.emailAddress,
+                          ),
+                          const SizedBox(height: 20),
+
+                          // Password Field
+                          _buildTextField(
+                            controller: passNoCtl,
+                            hintText: 'รหัสผ่าน',
+                            prefixIcon: Icons.lock_outline,
+                            obscureText: true,
+                          ),
+                          const SizedBox(height: 32),
+
+                          // Login Button
+                          _buildLoginButton(),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 24),
+
+                  // Sign Up Link
+                  Center(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "ยังไม่มีบัญชี? ",
+                          style: TextStyle(
+                            color: Colors.white.withOpacity(0.8),
+                            fontSize: 16,
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: _navigateToRegister,
+                          child: const Text(
+                            'สมัครสมาชิก',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                              decoration: TextDecoration.underline,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String hintText,
+    required IconData prefixIcon,
+    bool obscureText = false,
+    TextInputType? keyboardType,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.grey[50],
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: Colors.grey[200]!,
+          width: 1,
+        ),
+      ),
+      child: TextField(
+        controller: controller,
+        obscureText: obscureText,
+        keyboardType: keyboardType,
+        style: const TextStyle(
+          fontSize: 16,
+          color: Color(0xFF212121),
+        ),
+        decoration: InputDecoration(
+          hintText: hintText,
+          hintStyle: TextStyle(
+            color: Colors.grey[400],
+            fontSize: 16,
+          ),
+          prefixIcon: Icon(
+            prefixIcon,
+            color: const Color(0xFF7E57C2),
+            size: 20,
+          ),
+          border: InputBorder.none,
+          contentPadding: const EdgeInsets.symmetric(
+            vertical: 16,
+            horizontal: 20,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLoginButton() {
+    return Container(
+      width: double.infinity,
+      height: 56,
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [Color(0xFF7E57C2), Color(0xFF9575CD)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF7E57C2).withOpacity(0.3),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
         ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: loginUser,
+          borderRadius: BorderRadius.circular(16),
+          child: const Center(
+            child: Text(
+              'เข้าสู่ระบบ',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }

@@ -1,1 +1,98 @@
-"build/" 
+# Build outputs
+build/
+*.apk
+*.aab
+*.ipa
+*.app
+*.exe
+*.dmg
+*.pkg
+
+# Flutter/Dart specific
+.dart_tool/
+.packages
+.metadata
+.flutter-plugins
+.flutter-plugins-dependencies
+pubspec.lock
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# Android specific
+android/app/debug/
+android/app/profile/
+android/app/release/
+android/gradle/
+android/gradlew
+android/gradlew.bat
+android/local.properties
+android/key.properties
+*.keystore
+*.jks
+
+# iOS specific
+ios/Flutter/Flutter.framework
+ios/Flutter/Flutter.podspec
+ios/Flutter/Generated.xcconfig
+ios/Flutter/app.flx
+ios/Flutter/app.zip
+ios/Flutter/flutter_assets/
+ios/ServiceDefinitions.json
+ios/Runner/GeneratedPluginRegistrant.*
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# Web specific
+web/index.html
+
+# Windows specific
+windows/flutter/
+
+# macOS specific
+macos/Flutter/
+
+# Linux specific
+linux/flutter/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Log files
+*.log
+logs/
+
+# Temporary files
+tmp/
+temp/
+.tmp/
+
+# Node modules (if any)
+node_modules/
+
+# Coverage reports
+coverage/
+
+# Test results
+test_results/
+
+# Local configuration files
+local.properties
+config/local_config.dart

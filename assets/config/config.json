@@ -1,0 +1,6 @@
+{
+  "apiEndpoint": "https://lotto-app-backend-h3gg.onrender.com/",
+  "appName": "Lotto App",
+  "version": "1.0.0",
+  "environment": "production"
+}
